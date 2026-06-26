@@ -4,20 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Труппа // Главный Хаб</title>
+    <!-- Подключаем официальный JS-клиент Supabase через CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            /* Палитра в стиле Hollow Knight: глубокие мрачные сине-серые тона, бледный свет, неоновые акценты душ */
             --bg-main: #0c0f12;
             --panel-bg: rgba(16, 21, 26, 0.8);
             --panel-border: rgba(255, 255, 255, 0.05);
             --accent-glow: rgba(0, 240, 255, 0.25);
-            --accent-cyan: #a6efff; /* Цвет бледных душ и масок */
-            --accent-magenta: #ea315a; /* Мрачно-бордовый / Алый цвет Труппы Гримма */
-            --accent-violet: #4a3b68; /* Темная пустота */
+            --accent-cyan: #a6efff; 
+            --accent-magenta: #ea315a; 
+            --accent-violet: #4a3b68; 
             --text-primary: #e2e8f0;
             --text-muted: #718096;
             --text-dark: #4a5568;
-            --font: 'Perpetua', 'Georgia', serif; /* Более готический / фэнтезийный шрифт */
+            --font: 'Perpetua', 'Georgia', serif;
         }
 
         body {
@@ -34,19 +35,14 @@
             position: relative;
         }
 
-        /* Анимированный атмосферный фон Гряземута / Халлоунеста */
         .ambient-bg {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: 0; left: 0; width: 100%; height: 100%;
             z-index: -1;
             overflow: hidden;
             background: radial-gradient(circle at 50% 30%, #161c24 0%, #0c0f12 80%);
         }
 
-        /* Эффект тумана / дымки */
         .fog {
             position: absolute;
             top: 0; left: 0; width: 200%; height: 100%;
@@ -56,13 +52,9 @@
             animation: fogMove 40s linear infinite;
         }
 
-        /* Падающие частицы (светлячки / гео / споры) */
         .particles {
             position: absolute;
-            width: 100%;
-            height: 100%;
-            top: 0;
-            left: 0;
+            width: 100%; height: 100%; top: 0; left: 0;
         }
 
         .particle {
@@ -74,7 +66,6 @@
             bottom: -20px;
         }
 
-        /* Генерация разного времени для частиц */
         .p1 { left: 10%; width: 4px; height: 4px; animation-duration: 14s; animation-delay: 1s; }
         .p2 { left: 30%; width: 6px; height: 6px; animation-duration: 18s; animation-delay: 5s; background: rgba(234, 49, 90, 0.2); box-shadow: 0 0 10px rgba(234, 49, 90, 0.5); }
         .p3 { left: 55%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: 0s; }
@@ -94,12 +85,8 @@
         }
 
         @media (min-width: 768px) {
-            .wrapper {
-                grid-template-columns: 380px 1fr;
-            }
-            header, .accordion-section, footer {
-                grid-column: 1 / -1;
-            }
+            .wrapper { grid-template-columns: 380px 1fr; }
+            header, .accordion-section, footer { grid-column: 1 / -1; }
         }
 
         header {
@@ -111,11 +98,7 @@
         }
 
         @media (min-width: 480px) {
-            header {
-                flex-direction: row;
-                align-items: center;
-                justify-content: space-between;
-            }
+            header { flex-direction: row; align-items: center; justify-content: space-between; }
         }
 
         header h1 {
@@ -168,304 +151,71 @@
             text-shadow: 0 0 10px rgba(166, 239, 255, 0.3);
         }
 
-        .form-group {
-            margin-bottom: 22px;
-        }
-
-        .form-group label {
-            display: block;
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 1.5px;
-            margin-bottom: 8px;
-        }
-
+        .form-group { margin-bottom: 22px; }
+        .form-group label { display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
         .form-group input {
-            width: 100%;
-            padding: 14px 18px;
-            background: rgba(7, 9, 12, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            border-radius: 6px;
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 0.95rem;
-            box-sizing: border-box;
-            transition: all 0.25s ease;
+            width: 100%; padding: 14px 18px; background: rgba(7, 9, 12, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+            color: var(--text-primary); font-family: inherit; font-size: 0.95rem; box-sizing: border-box; transition: all 0.25s ease;
         }
-
-        .form-group input:focus {
-            outline: none;
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 10px rgba(166, 239, 255, 0.15);
-            background: rgba(7, 9, 12, 0.95);
-        }
+        .form-group input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); background: rgba(7, 9, 12, 0.95); }
 
         button.btn-submit {
-            width: 100%;
-            padding: 16px;
-            background: linear-gradient(180deg, #2c323d, #1a1e26);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #fff;
-            border-radius: 6px;
-            font-family: inherit;
-            font-size: 0.95rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.2s;
+            width: 100%; padding: 16px; background: linear-gradient(180deg, #2c323d, #1a1e26); border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff; border-radius: 6px; font-family: inherit; font-size: 0.95rem; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.2s;
         }
+        button.btn-submit:hover { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(166, 239, 255, 0.2); background: linear-gradient(180deg, #373e4c, #20252f); }
 
-        button.btn-submit:hover {
-            border-color: var(--accent-cyan);
-            box-shadow: 0 0 15px rgba(166, 239, 255, 0.2);
-            background: linear-gradient(180deg, #373e4c, #20252f);
-        }
-
-        button.btn-submit:active {
-            transform: scale(0.99);
-        }
-
-        .meetups-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 18px;
-        }
-
+        .meetups-grid { display: flex; flex-direction: column; gap: 18px; }
         .meetup-card {
-            background: rgba(12, 15, 18, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.04);
-            border-radius: 8px;
-            padding: 24px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            gap: 20px;
-            transition: all 0.25s ease;
-            animation: fadeIn 0.35s ease-out;
+            background: rgba(12, 15, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 24px;
+            display: flex; justify-content: space-between; align-items: center; gap: 20px; transition: all 0.25s ease; animation: fadeIn 0.35s ease-out;
         }
-
-        .meetup-card:hover {
-            border-color: rgba(166, 239, 255, 0.2);
-            background: rgba(16, 21, 26, 0.9);
-        }
-
-        .meetup-info {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .meetup-meta-line {
-            display: flex;
-            flex-wrap: wrap;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .meetup-time {
-            font-size: 1.4rem;
-            font-weight: normal;
-            letter-spacing: 0.5px;
-            color: var(--text-primary);
-        }
-
-        .meetup-badge {
-            font-size: 0.75rem;
-            background: rgba(255, 255, 255, 0.04);
-            color: var(--text-muted);
-            padding: 4px 10px;
-            border-radius: 4px;
-        }
-
-        .meetup-organizer {
-            font-size: 0.85rem;
-            color: var(--accent-cyan);
-            background: rgba(166, 239, 255, 0.05);
-            padding: 3px 10px;
-            border-radius: 4px;
-            border: 1px solid rgba(166, 239, 255, 0.1);
-        }
-
-        .meetup-location {
-            font-size: 1rem;
-            color: #a0aec0;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
+        .meetup-card:hover { border-color: rgba(166, 239, 255, 0.2); background: rgba(16, 21, 26, 0.9); }
+        .meetup-info { display: flex; flex-direction: column; gap: 10px; }
+        .meetup-meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
+        .meetup-time { font-size: 1.4rem; font-weight: normal; letter-spacing: 0.5px; color: var(--text-primary); }
+        .meetup-badge { font-size: 0.75rem; background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 4px 10px; border-radius: 4px; }
+        .meetup-organizer { font-size: 0.85rem; color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(166, 239, 255, 0.1); }
+        .meetup-location { font-size: 1rem; color: #a0aec0; display: flex; align-items: center; gap: 8px; }
 
         button.delete-btn {
-            background: transparent;
-            border: 1px solid rgba(234, 49, 90, 0.2);
-            color: var(--accent-magenta);
-            padding: 10px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-family: inherit;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            transition: all 0.2s;
-            flex-shrink: 0;
+            background: transparent; border: 1px solid rgba(234, 49, 90, 0.2); color: var(--accent-magenta); padding: 10px 16px; border-radius: 4px;
+            cursor: pointer; font-family: inherit; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; flex-shrink: 0;
         }
+        button.delete-btn:hover { background: var(--accent-magenta); color: #fff; box-shadow: 0 0 12px rgba(234, 49, 90, 0.4); }
 
-        button.delete-btn:hover {
-            background: var(--accent-magenta);
-            color: #fff;
-            box-shadow: 0 0 12px rgba(234, 49, 90, 0.4);
-        }
+        .no-meetups { border: 1px dashed rgba(255, 255, 255, 0.05); border-radius: 8px; padding: 45px; text-align: center; color: var(--text-muted); font-size: 0.95rem; }
 
-        .no-meetups {
-            border: 1px dashed rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            padding: 45px;
-            text-align: center;
-            color: var(--text-muted);
-            font-size: 0.95rem;
-        }
-
-        .accordion-section {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            margin-top: 15px;
-        }
-
-        .accordion-item {
-            background: var(--panel-bg);
-            border: 1px solid var(--panel-border);
-            border-radius: 8px;
-            overflow: hidden;
-        }
-
+        .accordion-section { display: flex; flex-direction: column; gap: 15px; margin-top: 15px; }
+        .accordion-item { background: var(--panel-bg); border: 1px solid var(--panel-border); border-radius: 8px; overflow: hidden; }
         .accordion-trigger {
-            width: 100%;
-            background: transparent;
-            border: none;
-            padding: 20px 25px;
-            text-align: left;
-            color: var(--text-primary);
-            font-family: inherit;
-            font-size: 1rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            letter-spacing: 1px;
+            width: 100%; background: transparent; border: none; padding: 20px 25px; text-align: left; color: var(--text-primary);
+            font-family: inherit; font-size: 1rem; cursor: pointer; display: flex; justify-content: space-between; align-items: center; letter-spacing: 1px;
         }
+        .accordion-trigger::after { content: '＋'; font-size: 1.1rem; color: var(--text-muted); transition: transform 0.25s; }
+        .accordion-item.active .accordion-trigger::after { transform: rotate(45deg); color: var(--accent-magenta); }
+        .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0, 1, 0, 1); background: rgba(7, 9, 12, 0.5); }
+        .accordion-item.active .accordion-content { max-height: 2000px; transition: max-height 0.3s cubic-bezier(1, 0, 1, 0); border-top: 1px solid rgba(255, 255, 255, 0.02); }
+        .accordion-body { padding: 25px; font-size: 0.95rem; line-height: 1.6; color: #cbd5e0; white-space: pre-wrap; }
 
-        .accordion-trigger::after {
-            content: '＋';
-            font-size: 1.1rem;
-            color: var(--text-muted);
-            transition: transform 0.25s;
-        }
-
-        .accordion-item.active .accordion-trigger::after {
-            transform: rotate(45deg);
-            color: var(--accent-magenta);
-        }
-
-        .accordion-content {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
-            background: rgba(7, 9, 12, 0.5);
-        }
-
-        .accordion-item.active .accordion-content {
-            max-height: 2000px;
-            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
-            border-top: 1px solid rgba(255, 255, 255, 0.02);
-        }
-
-        .accordion-body {
-            padding: 25px;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #cbd5e0;
-            white-space: pre-wrap;
-        }
-
-        footer {
-            border-top: 1px solid rgba(255, 255, 255, 0.05);
-            padding-top: 30px;
-            margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            align-items: center;
-        }
-
-        .footer-links {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 15px;
-        }
-
+        footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
+        .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .footer-link-card {
-            background: rgba(7, 9, 12, 0.6);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            padding: 12px 24px;
-            border-radius: 6px;
-            color: var(--accent-cyan);
-            text-decoration: none;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            background: rgba(7, 9, 12, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 24px; border-radius: 6px;
+            color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
         }
-
-        .footer-link-card:hover {
-            border-color: var(--accent-cyan);
-            background: rgba(166, 239, 255, 0.05);
-            box-shadow: 0 0 10px rgba(166, 239, 255, 0.15);
-        }
-
-        .footer-credits {
-            font-size: 0.8rem;
-            color: var(--text-dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        /* Ссылка-копирайт в самом низу страницы */
+        .footer-link-card:hover { border-color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); }
+        .footer-credits { font-size: 0.8rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        
         .huescapist-credit {
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            text-decoration: none;
-            color: rgba(255, 255, 255, 0.2);
-            transition: color 0.2s, text-shadow 0.2s;
-            margin-top: -5px;
+            font-size: 0.75rem; letter-spacing: 1px; text-decoration: none; color: rgba(255, 255, 255, 0.2);
+            transition: color 0.2s, text-shadow 0.2s; margin-top: -5px;
         }
+        .huescapist-credit:hover { color: var(--accent-cyan); text-shadow: 0 0 8px rgba(166, 239, 255, 0.6); }
 
-        .huescapist-credit:hover {
-            color: var(--accent-cyan);
-            text-shadow: 0 0 8px rgba(166, 239, 255, 0.6);
-        }
-
-        /* Анимации */
-        @keyframes fogMove {
-            0% { transform: translate(0, 0); }
-            50% { transform: translate(-25%, 5%); }
-            100% { transform: translate(0, 0); }
-        }
-
-        @keyframes floatUp {
-            0% { transform: translateY(0) scale(0.8); opacity: 0; }
-            10% { opacity: 0.4; }
-            90% { opacity: 0.4; }
-            100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+        @keyframes fogMove { 0% { transform: translate(0, 0); } 50% { transform: translate(-25%, 5%); } 100% { transform: translate(0, 0); } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { transform: translateY(-100vh) scale(1.2); opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
@@ -487,6 +237,7 @@
             <div class="status-badge">Защищенный Контур</div>
         </header>
 
+        <!-- ЛЕВАЯ КОЛОНКА -->
         <main class="panel">
             <h2><span>＋</span> Назначить сходку</h2>
             <form id="create-meetup-form">
@@ -510,6 +261,7 @@
             </form>
         </main>
 
+        <!-- ПРАВАЯ КОЛОНКА -->
         <section class="events-column">
             <div class="panel" style="padding: 25px; height: calc(100% - 52px);">
                 <h2><span>⚡</span> Актуальные расписания</h2>
@@ -517,6 +269,7 @@
             </div>
         </section>
 
+        <!-- АККОРДЕОНЫ -->
         <section class="accordion-section">
             <div class="accordion-item">
                 <button class="accordion-trigger" onclick="toggleAccordion(this)">Комплекс рекомендаций для сходок</button>
@@ -608,16 +361,33 @@ p.s. если в нашем чате или беседе состоит чело
     </div>
 
     <script>
+        // Конфигурация Supabase проекта
+        const SUPABASE_URL = "https://tltdvaoupzpwmykbdtvj.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_frytcYHJGFlhneyXXmqgnw_Lf1NkfqX";
+        
+        // Инициализируем клиент
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+        // Секретные фразы для локальной верификации перед отправкой/удалением
         const PUBLISH_PASSWORD = "труппа_создать";
         const DELETE_PASSWORD = "труппа_админ";
 
         const form = document.getElementById('create-meetup-form');
         const meetupsContainer = document.getElementById('meetups-container');
 
-        let meetups = JSON.parse(localStorage.getItem('meetups_v5')) || [];
+        // Функция получения сходок из облачной базы данных
+        async function fetchMeetups() {
+            try {
+                const { data, error } = await _supabase
+                    .from('meetups')
+                    .select('*');
 
-        function saveMeetups() {
-            localStorage.setItem('meetups_v5', JSON.stringify(meetups));
+                if (error) throw error;
+                renderMeetups(data || []);
+            } catch (err) {
+                console.error("Ошибка при получении данных из Supabase:", err);
+                meetupsContainer.innerHTML = '<div class="no-meetups" style="color:#ff5555;">Ошибка синхронизации с облаком. Проверьте структуру таблицы.</div>';
+            }
         }
 
         function formatDate(dateStr) {
@@ -625,7 +395,7 @@ p.s. если в нашем чате или беседе состоит чело
             return new Date(dateStr).toLocaleDateString('ru-RU', options);
         }
 
-        function renderMeetups() {
+        function renderMeetups(meetups) {
             meetupsContainer.innerHTML = '';
 
             if (meetups.length === 0) {
@@ -633,6 +403,7 @@ p.s. если в нашем чате или беседе состоит чело
                 return;
             }
 
+            // Сортируем сходки по дате и времени (ближайшие сверху)
             meetups.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
 
             meetups.forEach(meetup => {
@@ -641,7 +412,7 @@ p.s. если в нашем чате или беседе состоит чело
                 card.innerHTML = `
                     <div class="meetup-info">
                         <div class="meetup-meta-line">
-                            <span class="meetup-time">${meetup.time}</span>
+                            <span class="meetup-time">${meetup.time.substring(0,5)}</span>
                             <span class="meetup-badge">${formatDate(meetup.date)}</span>
                             <span class="meetup-organizer">Орг: ${meetup.organizer}</span>
                         </div>
@@ -653,7 +424,8 @@ p.s. если в нашем чате или беседе состоит чело
             });
         }
 
-        form.addEventListener('submit', (e) => {
+        // Обработчик формы публикации
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const password = prompt("Введите секретное слово для публикации события:");
@@ -669,32 +441,50 @@ p.s. если в нашем чате или беседе состоит чело
             const location = document.getElementById('meetup-location').value;
             const organizer = document.getElementById('meetup-organizer').value;
 
-            const newMeetup = {
-                id: Date.now().toString(),
-                date: date,
-                time: time,
-                location: location,
-                organizer: organizer
-            };
+            try {
+                // Добавляем запись напрямую в облачную таблицу `meetups`
+                const { error } = await _supabase
+                    .from('meetups')
+                    .insert([{ date, time, location, organizer }]);
 
-            meetups.push(newMeetup);
-            saveMeetups();
-            renderMeetups();
-            form.reset();
-            alert("Сходка успешно добавлена!");
+                if (error) throw error;
+
+                form.reset();
+                alert("Сходка добавлена в общее облако!");
+                fetchMeetups(); // Обновляем ленту у всех
+            } catch (err) {
+                console.error("Ошибка вставки в Supabase:", err);
+                alert("Не удалось сохранить в БД. Убедитесь, что таблица 'meetups' создана.");
+            }
         });
 
+        // Функция удаления из общей базы
         window.deleteMeetup = function(id) {
             const password = prompt("Введите секретный ключ администратора для удаления:");
             if (password === null) return;
 
             if (password === DELETE_PASSWORD) {
-                meetups = meetups.filter(meetup => meetup.id !== id);
-                saveMeetups();
-                renderMeetups();
-                alert("Событие удалено.");
+                // Выполняем асинхронную операцию удаления по ID в Supabase
+                confirmDelete(id);
             } else {
                 alert("Неверный ключ. Отказано в доступе.");
+            }
+        }
+
+        async function confirmDelete(id) {
+            try {
+                const { error } = await _supabase
+                    .from('meetups')
+                    .delete()
+                    .eq('id', id);
+
+                if (error) throw error;
+
+                alert("Событие удалено из облака.");
+                fetchMeetups();
+            } catch (err) {
+                console.error("Ошибка удаления из Supabase:", err);
+                alert("Ошибка при удалении записи с сервера.");
             }
         }
 
@@ -703,7 +493,8 @@ p.s. если в нашем чате или беседе состоит чело
             item.classList.toggle('active');
         }
 
-        renderMeetups();
+        // Первичная загрузка актуальных сходок из облака при открытии хаба
+        fetchMeetups();
     </script>
 </body>
 </html>
