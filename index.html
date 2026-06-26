@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Труппа // Главный Хаб</title>
+    <style>
+        :root {
+            /* Палитра в стиле Hollow Knight: глубокие мрачные сине-серые тона, бледный свет, неоновые акценты душ */
+            --bg-main: #0c0f12;
+            --panel-bg: rgba(16, 21, 26, 0.8);
+            --panel-border: rgba(255, 255, 255, 0.05);
+            --accent-glow: rgba(0, 240, 255, 0.25);
+            --accent-cyan: #a6efff; /* Цвет бледных душ и масок */
+            --accent-magenta: #ea315a; /* Мрачно-бордовый / Алый цвет Труппы Гримма */
+            --accent-violet: #4a3b68; /* Темная пустота */
+            --text-primary: #e2e8f0;
+            --text-muted: #718096;
+            --text-dark: #4a5568;
+            --font: 'Perpetua', 'Georgia', serif; /* Более готический / фэнтезийный шрифт */
+        }
+
+        body {
+            font-family: var(--font), sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Анимированный атмосферный фон Гряземута / Халлоунеста */
+        .ambient-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 30%, #161c24 0%, #0c0f12 80%);
+        }
+
+        /* Эффект тумана / дымки */
+        .fog {
+            position: absolute;
+            top: 0; left: 0; width: 200%; height: 100%;
+            background: radial-gradient(circle at 30% 50%, rgba(166, 239, 255, 0.03) 0%, transparent 40%),
+                        radial-gradient(circle at 70% 80%, rgba(234, 49, 90, 0.02) 0%, transparent 40%);
+            opacity: 0.7;
+            animation: fogMove 40s linear infinite;
+        }
+
+        /* Падающие частицы (светлячки / гео / споры) */
+        .particles {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+        }
+
+        .particle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(166, 239, 255, 0.3);
+            box-shadow: 0 0 10px rgba(166, 239, 255, 0.6);
+            animation: floatUp 12s infinite linear;
+            bottom: -20px;
+        }
+
+        /* Генерация разного времени для частиц */
+        .p1 { left: 10%; width: 4px; height: 4px; animation-duration: 14s; animation-delay: 1s; }
+        .p2 { left: 30%; width: 6px; height: 6px; animation-duration: 18s; animation-delay: 5s; background: rgba(234, 49, 90, 0.2); box-shadow: 0 0 10px rgba(234, 49, 90, 0.5); }
+        .p3 { left: 55%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: 0s; }
+        .p4 { left: 75%; width: 5px; height: 5px; animation-duration: 16s; animation-delay: 3s; }
+        .p5 { left: 90%; width: 4px; height: 4px; animation-duration: 20s; animation-delay: 7s; }
+
+        .wrapper {
+            width: 100%;
+            max-width: 1000px;
+            padding: 50px 20px;
+            box-sizing: border-box;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 35px;
+            position: relative;
+            z-index: 1;
+        }
+
+        @media (min-width: 768px) {
+            .wrapper {
+                grid-template-columns: 380px 1fr;
+            }
+            header, .accordion-section, footer {
+                grid-column: 1 / -1;
+            }
+        }
+
+        header {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 25px;
+        }
+
+        @media (min-width: 480px) {
+            header {
+                flex-direction: row;
+                align-items: center;
+                justify-content: space-between;
+            }
+        }
+
+        header h1 {
+            font-size: 2.4rem;
+            font-weight: normal;
+            text-transform: uppercase;
+            letter-spacing: 8px;
+            margin: 0;
+            background: linear-gradient(180deg, #ffffff 30%, #a6efff 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(166,239,255,0.2);
+        }
+
+        .status-badge {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            background: rgba(234, 49, 90, 0.1);
+            color: var(--accent-magenta);
+            padding: 6px 14px;
+            border-radius: 4px;
+            border: 1px solid rgba(234, 49, 90, 0.2);
+            font-weight: 700;
+            width: fit-content;
+        }
+
+        .panel {
+            background: var(--panel-bg);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+        }
+
+        .panel h2 {
+            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: normal;
+            text-shadow: 0 0 10px rgba(166, 239, 255, 0.3);
+        }
+
+        .form-group {
+            margin-bottom: 22px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            margin-bottom: 8px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px 18px;
+            background: rgba(7, 9, 12, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 6px;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 0.95rem;
+            box-sizing: border-box;
+            transition: all 0.25s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 10px rgba(166, 239, 255, 0.15);
+            background: rgba(7, 9, 12, 0.95);
+        }
+
+        button.btn-submit {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(180deg, #2c323d, #1a1e26);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #fff;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.95rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button.btn-submit:hover {
+            border-color: var(--accent-cyan);
+            box-shadow: 0 0 15px rgba(166, 239, 255, 0.2);
+            background: linear-gradient(180deg, #373e4c, #20252f);
+        }
+
+        button.btn-submit:active {
+            transform: scale(0.99);
+        }
+
+        .meetups-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        .meetup-card {
+            background: rgba(12, 15, 18, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.04);
+            border-radius: 8px;
+            padding: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 20px;
+            transition: all 0.25s ease;
+            animation: fadeIn 0.35s ease-out;
+        }
+
+        .meetup-card:hover {
+            border-color: rgba(166, 239, 255, 0.2);
+            background: rgba(16, 21, 26, 0.9);
+        }
+
+        .meetup-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .meetup-meta-line {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .meetup-time {
+            font-size: 1.4rem;
+            font-weight: normal;
+            letter-spacing: 0.5px;
+            color: var(--text-primary);
+        }
+
+        .meetup-badge {
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.04);
+            color: var(--text-muted);
+            padding: 4px 10px;
+            border-radius: 4px;
+        }
+
+        .meetup-organizer {
+            font-size: 0.85rem;
+            color: var(--accent-cyan);
+            background: rgba(166, 239, 255, 0.05);
+            padding: 3px 10px;
+            border-radius: 4px;
+            border: 1px solid rgba(166, 239, 255, 0.1);
+        }
+
+        .meetup-location {
+            font-size: 1rem;
+            color: #a0aec0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        button.delete-btn {
+            background: transparent;
+            border: 1px solid rgba(234, 49, 90, 0.2);
+            color: var(--accent-magenta);
+            padding: 10px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: inherit;
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        button.delete-btn:hover {
+            background: var(--accent-magenta);
+            color: #fff;
+            box-shadow: 0 0 12px rgba(234, 49, 90, 0.4);
+        }
+
+        .no-meetups {
+            border: 1px dashed rgba(255, 255, 255, 0.05);
+            border-radius: 8px;
+            padding: 45px;
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 0.95rem;
+        }
+
+        .accordion-section {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .accordion-item {
+            background: var(--panel-bg);
+            border: 1px solid var(--panel-border);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .accordion-trigger {
+            width: 100%;
+            background: transparent;
+            border: none;
+            padding: 20px 25px;
+            text-align: left;
+            color: var(--text-primary);
+            font-family: inherit;
+            font-size: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            letter-spacing: 1px;
+        }
+
+        .accordion-trigger::after {
+            content: '＋';
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            transition: transform 0.25s;
+        }
+
+        .accordion-item.active .accordion-trigger::after {
+            transform: rotate(45deg);
+            color: var(--accent-magenta);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s cubic-bezier(0, 1, 0, 1);
+            background: rgba(7, 9, 12, 0.5);
+        }
+
+        .accordion-item.active .accordion-content {
+            max-height: 2000px;
+            transition: max-height 0.3s cubic-bezier(1, 0, 1, 0);
+            border-top: 1px solid rgba(255, 255, 255, 0.02);
+        }
+
+        .accordion-body {
+            padding: 25px;
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #cbd5e0;
+            white-space: pre-wrap;
+        }
+
+        footer {
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 30px;
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .footer-links {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .footer-link-card {
+            background: rgba(7, 9, 12, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 12px 24px;
+            border-radius: 6px;
+            color: var(--accent-cyan);
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-link-card:hover {
+            border-color: var(--accent-cyan);
+            background: rgba(166, 239, 255, 0.05);
+            box-shadow: 0 0 10px rgba(166, 239, 255, 0.15);
+        }
+
+        .footer-credits {
+            font-size: 0.8rem;
+            color: var(--text-dark);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 5px;
+        }
+
+        /* Ссылка-копирайт в самом низу страницы */
+        .huescapist-credit {
+            font-size: 0.75rem;
+            letter-spacing: 1px;
+            text-decoration: none;
+            color: rgba(255, 255, 255, 0.2);
+            transition: color 0.2s, text-shadow 0.2s;
+            margin-top: -5px;
+        }
+
+        .huescapist-credit:hover {
+            color: var(--accent-cyan);
+            text-shadow: 0 0 8px rgba(166, 239, 255, 0.6);
+        }
+
+        /* Анимации */
+        @keyframes fogMove {
+            0% { transform: translate(0, 0); }
+            50% { transform: translate(-25%, 5%); }
+            100% { transform: translate(0, 0); }
+        }
+
+        @keyframes floatUp {
+            0% { transform: translateY(0) scale(0.8); opacity: 0; }
+            10% { opacity: 0.4; }
+            90% { opacity: 0.4; }
+            100% { transform: translateY(-100vh) scale(1.2); opacity: 0; }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="fog"></div>
+        <div class="particles">
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+            <div class="particle p5"></div>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <header>
+            <h1>Труппа</h1>
+            <div class="status-badge">Защищенный Контур</div>
+        </header>
+
+        <main class="panel">
+            <h2><span>＋</span> Назначить сходку</h2>
+            <form id="create-meetup-form">
+                <div class="form-group">
+                    <label for="meetup-date">Дата встречи</label>
+                    <input type="date" id="meetup-date" required>
+                </div>
+                <div class="form-group">
+                    <label for="meetup-time">Время начала</label>
+                    <input type="time" id="meetup-time" required>
+                </div>
+                <div class="form-group">
+                    <label for="meetup-location">Локация / Координаты</label>
+                    <input type="text" id="meetup-location" placeholder="Место сбора..." required>
+                </div>
+                <div class="form-group">
+                    <label for="meetup-organizer">Организатор(ы)</label>
+                    <input type="text" id="meetup-organizer" placeholder="Имена или никнеймы..." required>
+                </div>
+                <button type="submit" class="btn-submit">Опубликовать</button>
+            </form>
+        </main>
+
+        <section class="events-column">
+            <div class="panel" style="padding: 25px; height: calc(100% - 52px);">
+                <h2><span>⚡</span> Актуальные расписания</h2>
+                <div id="meetups-container" class="meetups-grid"></div>
+            </div>
+        </section>
+
+        <section class="accordion-section">
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Комплекс рекомендаций для сходок</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">🐈наши дружеские сходки стали регулярными в Москве и это замечательно 🖤
+однако, в нашем мире достаточное количество негатива, провокаций и даже агрессии...😐
+данный комплекс рекомендаций поможет нам провести время спокойно и вайбово 👍
+
+1. не стоит приходить на сходку под воздействием алкоголя или других психоактивных веществ. это лишний повод для неадекватных людей, ищущих повод для драки/конфликта и правоохранителей, которые могут вас задержать по подозрению до выяснения ситуации.
+
+2. не стоит поддаваться на провокации с чьей либо стороны. помните, что наши сходки - это сходки друзей, а не бойцовский клуб и не бюро поиска конфликта. на все провокационные вопросы, заявления, "спросы" за что либо, реагируйте спокойно, по возможности - игнорируйте. 
+⚡️помните! В 99% случаев, конфликта и агрессивных действий можно избежать, если вести диалог более дипломатично, нежели собеседник. вы никому ничего не должны доказывать. одежда, обувь, стиль и субкультура - ваше личное дело и позиция.
+⛓не должно быть спроса за образ жизни и шмот - это неадекватно⛓
+
+3. держаться вместе на самой сходке, в туалеты ходить по гендерному признаку вместе, по возможности. после окончания сходки, очень желательно провожать каждого участника сходки, хотя бы до автобуса/метро. особенно девочек. можно заранее определить р-н проживания участников сходки и добираться до дома вместе. быть бдительными и обращать внимание, если за вами кто-то идет/преследует длительное время. нужно остановится в людном месте и подождать, пока человек/люди пройдут. 
+
+4. база - не быть провокатором и неадекватом. это могут быть разные действия, однако вы должны видеть грань и не переступать черту, если не хотите быть привлечены к ответственности или стать достоянием различных каналов и пабликов, которые выживают за счет данного фото/видеоматериала.
+
+5. оставаться в рамках закона. не бояться вызвать правоохранителей на место происшествия и зафиксировать факт нарушения законодательства, написать заявление. 
+
+6. иметь с собой средства самообороны и уверенно применять их, если на вас совершенно нападение. не давайте себя в обиду! 
+
+7. просим воздерживаться от употребления алкоголя. хотя бы, чтобы не нарушать закон. ведь места проведения сходок - это общественные места. 
+
+🎀 всем желаю хорошей сходки завтра и ярких, вайбовых эмоций! 
+мы как семья. только лучше 🖤</div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Памятка для несовершеннолетних</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">Памятка для несовершеннолетних 😲
+Дружеские сходки - это круто и весело, но не теряй бдительности!
+Даже на таких мероприятиях можно встретиться с опасностью 🌌
+
+Запомни 3 простых правила: 
+1. Ты не должен и не обязан делать то, что тебе не хочется! Даже если это говорит на сходке/пишет в мессенджере человек старше тебя!
+2. Ты обязан говорить «НЕТ» (особенно в ситуации телесного контакта)
+3. Ты должен громко звать на помощь, если находишься в опасности! 
+
+🖤 Если с тобой случилось что-то плохое:
+- Ты подвергся избиению или физическому насилию;
+- Твои границы прикосновений были нарушены (в частности прикосновения к интимным местам);
+- Ты подвергся сексуализированному насилию (это любые действия сексуального характера, от вербальных намёков, фраз, жестов до принудительного взаимодействия и принуждения);
+- Тебя угостили какими-либо неизвестными таблетками, напитками, порошком и тебе становится плохо;
+Ты находишь безопасное место и немедленно рассказываешь об этом полиции и родителям: 
+📞 112 — это общий номер для вызова полиции и скорой помощи.
+📞 8-800-2000-122 — Единый общероссийский номер детского телефона доверия (работает круглосуточно, бесплатно и анонимно).
+
+😁 еще несколько рекомендаций:
+🕷Не делись своими личными данными с малознакомыми ребятами.
+❓Не ходи к малознакомым ребятам на "вписки", к ним домой и т.п., а если идешь, то сообщи об этом родителям или друзьям, подробно рассказав куда и с кем ты направляешься.
+🥰Не пробуй и не принимай никакие таблетки, порошки, напитки и другие странные вещи, если тебе их предлагают. 
+🪷Если тебе некомфортно от каких либо действий конкретного человека - спокойно сообщи ему об этом. Если это не помогло - перестань с ним взаимодействовать. При необходимости покинь сходку.
+
+p.s. если в нашем чате или беседе состоит человек, который угрожает тебе, предлагает непристойные вещи - сообщи об этом в ЛС администратору 
+
+мы как семья. только лучше 🖤</div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Ресурсы и каналы Труппы</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">Тг канал: t.me/troupe1x3
+правила: telegra.ph/Obshchie-polozheniya-Besedy-Laskovyj-kit-08-27
+
+Только вайб 🖤
+Запрещена любая пропаганда суицида!
+
+112 — Единый номер экстренных служб 
+телефона доверия для детей и подростков: 8-800-2000-122
+
+вы не одиноки...</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://t.me/LaskoviyKit" target="_blank" class="footer-link-card">💬 Ласковая беседа</a>
+                <a href="https://t.me/addstickers/Truppa_MOMENTY" target="_blank" class="footer-link-card">✨ Стикеры</a>
+                <a href="https://t.me/+KEV4GGNihfo0Yjg6" target="_blank" class="footer-link-card">📦 Хранилище материала</a>
+            </div>
+            <div class="footer-credits">ТРУППА // 2026</div>
+            <a href="https://huescapist.github.io/portfolio/" target="_blank" class="huescapist-credit">created by huescapist</a>
+        </footer>
+    </div>
+
+    <script>
+        const PUBLISH_PASSWORD = "труппа_создать";
+        const DELETE_PASSWORD = "труппа_админ";
+
+        const form = document.getElementById('create-meetup-form');
+        const meetupsContainer = document.getElementById('meetups-container');
+
+        let meetups = JSON.parse(localStorage.getItem('meetups_v5')) || [];
+
+        function saveMeetups() {
+            localStorage.setItem('meetups_v5', JSON.stringify(meetups));
+        }
+
+        function formatDate(dateStr) {
+            const options = { month: 'short', day: 'numeric', weekday: 'short' };
+            return new Date(dateStr).toLocaleDateString('ru-RU', options);
+        }
+
+        function renderMeetups() {
+            meetupsContainer.innerHTML = '';
+
+            if (meetups.length === 0) {
+                meetupsContainer.innerHTML = '<div class="no-meetups">На горизонте тихо. Сходок пока не запланировано.</div>';
+                return;
+            }
+
+            meetups.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+
+            meetups.forEach(meetup => {
+                const card = document.createElement('div');
+                card.className = 'meetup-card';
+                card.innerHTML = `
+                    <div class="meetup-info">
+                        <div class="meetup-meta-line">
+                            <span class="meetup-time">${meetup.time}</span>
+                            <span class="meetup-badge">${formatDate(meetup.date)}</span>
+                            <span class="meetup-organizer">Орг: ${meetup.organizer}</span>
+                        </div>
+                        <div class="meetup-location">📍 ${meetup.location}</div>
+                    </div>
+                    <button class="delete-btn" onclick="deleteMeetup('${meetup.id}')">Удалить</button>
+                `;
+                meetupsContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const password = prompt("Введите секретное слово для публикации события:");
+            if (password === null) return;
+
+            if (password !== PUBLISH_PASSWORD) {
+                alert("Неверное кодовое слово. Публикация отклонена.");
+                return;
+            }
+
+            const date = document.getElementById('meetup-date').value;
+            const time = document.getElementById('meetup-time').value;
+            const location = document.getElementById('meetup-location').value;
+            const organizer = document.getElementById('meetup-organizer').value;
+
+            const newMeetup = {
+                id: Date.now().toString(),
+                date: date,
+                time: time,
+                location: location,
+                organizer: organizer
+            };
+
+            meetups.push(newMeetup);
+            saveMeetups();
+            renderMeetups();
+            form.reset();
+            alert("Сходка успешно добавлена!");
+        });
+
+        window.deleteMeetup = function(id) {
+            const password = prompt("Введите секретный ключ администратора для удаления:");
+            if (password === null) return;
+
+            if (password === DELETE_PASSWORD) {
+                meetups = meetups.filter(meetup => meetup.id !== id);
+                saveMeetups();
+                renderMeetups();
+                alert("Событие удалено.");
+            } else {
+                alert("Неверный ключ. Отказано в доступе.");
+            }
+        }
+
+        function toggleAccordion(element) {
+            const item = element.parentElement;
+            item.classList.toggle('active');
+        }
+
+        renderMeetups();
+    </script>
+</body>
+</html>
