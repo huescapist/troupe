@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Труппа // Главный Хаб</title>
-    <!-- Подключаем официальный JS-клиент Supabase через CDN -->
+    <!-- Официальный JS-клиент Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -74,7 +74,7 @@
 
         .wrapper {
             width: 100%;
-            max-width: 1000px;
+            max-width: 1100px;
             padding: 50px 20px;
             box-sizing: border-box;
             display: grid;
@@ -84,8 +84,8 @@
             z-index: 1;
         }
 
-        @media (min-width: 768px) {
-            .wrapper { grid-template-columns: 380px 1fr; }
+        @media (min-width: 900px) {
+            .wrapper { grid-template-columns: 450px 1fr; }
             header, .accordion-section, footer { grid-column: 1 / -1; }
         }
 
@@ -151,13 +151,39 @@
             text-shadow: 0 0 10px rgba(166, 239, 255, 0.3);
         }
 
-        .form-group { margin-bottom: 22px; }
-        .form-group label { display: block; font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 8px; }
-        .form-group input {
-            width: 100%; padding: 14px 18px; background: rgba(7, 9, 12, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; font-size: 0.8rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+        
+        .form-group input[type="text"],
+        .form-group input[type="date"],
+        .form-group input[type="time"],
+        .form-group textarea {
+            width: 100%; padding: 12px 14px; background: rgba(7, 9, 12, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
             color: var(--text-primary); font-family: inherit; font-size: 0.95rem; box-sizing: border-box; transition: all 0.25s ease;
         }
-        .form-group input:focus { outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); background: rgba(7, 9, 12, 0.95); }
+        
+        .form-group textarea { resize: vertical; min-height: 70px; }
+        
+        .form-group input:focus, .form-group textarea:focus { 
+            outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); background: rgba(7, 9, 12, 0.95); 
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* Кастомный стиль для загрузки файлов */
+        .file-upload-wrapper {
+            position: relative;
+            display: block;
+        }
+        .file-upload-input {
+            width: 100%; padding: 12px; background: rgba(7, 9, 12, 0.6); border: 1px dashed rgba(255,255,255,0.15); border-radius: 6px;
+            color: var(--text-muted); font-size: 0.9rem; cursor: pointer; text-align: center; box-sizing: border-box;
+        }
+        .file-upload-input:hover { border-color: var(--accent-cyan); color: var(--text-primary); }
 
         button.btn-submit {
             width: 100%; padding: 16px; background: linear-gradient(180deg, #2c323d, #1a1e26); border: 1px solid rgba(255, 255, 255, 0.15);
@@ -165,22 +191,31 @@
         }
         button.btn-submit:hover { border-color: var(--accent-cyan); box-shadow: 0 0 15px rgba(166, 239, 255, 0.2); background: linear-gradient(180deg, #373e4c, #20252f); }
 
-        .meetups-grid { display: flex; flex-direction: column; gap: 18px; }
+        .meetups-grid { display: flex; flex-direction: column; gap: 20px; }
         .meetup-card {
-            background: rgba(12, 15, 18, 0.8); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 8px; padding: 24px;
-            display: flex; justify-content: space-between; align-items: center; gap: 20px; transition: all 0.25s ease; animation: fadeIn 0.35s ease-out;
+            background: rgba(12, 15, 18, 0.85); border: 1px solid rgba(255, 255, 255, 0.04); border-radius: 10px; padding: 25px;
+            display: flex; flex-direction: column; gap: 15px; transition: all 0.25s ease; animation: fadeIn 0.35s ease-out; position: relative;
         }
         .meetup-card:hover { border-color: rgba(166, 239, 255, 0.2); background: rgba(16, 21, 26, 0.9); }
-        .meetup-info { display: flex; flex-direction: column; gap: 10px; }
-        .meetup-meta-line { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; }
-        .meetup-time { font-size: 1.4rem; font-weight: normal; letter-spacing: 0.5px; color: var(--text-primary); }
-        .meetup-badge { font-size: 0.75rem; background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 4px 10px; border-radius: 4px; }
-        .meetup-organizer { font-size: 0.85rem; color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(166, 239, 255, 0.1); }
-        .meetup-location { font-size: 1rem; color: #a0aec0; display: flex; align-items: center; gap: 8px; }
+        
+        .meetup-header-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
+        
+        .card-main-info { display: flex; flex-direction: column; gap: 6px; }
+        .card-datetime { font-size: 1.4rem; color: var(--text-primary); font-weight: normal; }
+        .card-badges { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
+        .badge-date { font-size: 0.75rem; background: rgba(255, 255, 255, 0.04); color: var(--text-muted); padding: 4px 10px; border-radius: 4px; }
+        .badge-org { font-size: 0.85rem; color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); padding: 3px 10px; border-radius: 4px; border: 1px solid rgba(166, 239, 255, 0.1); }
+        
+        .card-details-block {
+            display: flex; flex-direction: column; gap: 8px; font-size: 0.95rem; color: #cbd5e0; border-top: 1px solid rgba(255,255,255,0.03); padding-top: 12px;
+        }
+        .detail-item strong { color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 2px; letter-spacing: 0.5px; }
+        
+        .meetup-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-top: 5px; }
 
         button.delete-btn {
-            background: transparent; border: 1px solid rgba(234, 49, 90, 0.2); color: var(--accent-magenta); padding: 10px 16px; border-radius: 4px;
-            cursor: pointer; font-family: inherit; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s; flex-shrink: 0;
+            background: transparent; border: 1px solid rgba(234, 49, 90, 0.2); color: var(--accent-magenta); padding: 8px 14px; border-radius: 4px;
+            cursor: pointer; font-family: inherit; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; transition: all 0.2s;
         }
         button.delete-btn:hover { background: var(--accent-magenta); color: #fff; box-shadow: 0 0 12px rgba(234, 49, 90, 0.4); }
 
@@ -237,33 +272,71 @@
             <div class="status-badge">Защищенный Контур</div>
         </header>
 
-        <!-- ЛЕВАЯ КОЛОНКА -->
+        <!-- ЛЕВАЯ КОЛОНКА: СТРУКТУРИРОВАННАЯ ФОРМА МОДЕРАЦИИ -->
         <main class="panel">
             <h2><span>＋</span> Назначить сходку</h2>
             <form id="create-meetup-form">
+                
                 <div class="form-group">
-                    <label for="meetup-date">Дата встречи</label>
-                    <input type="date" id="meetup-date" required>
+                    <label>1. Описание события</label>
+                    <textarea id="p1_greeting" placeholder="Приветствие, формат (прогулка, большая сходка или поиск друзей)..." required></textarea>
                 </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>2. Дата сбора</label>
+                        <input type="date" id="meetup_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Время сбора</label>
+                        <input type="time" id="meetup_time" required>
+                    </div>
+                </div>
+
                 <div class="form-group">
-                    <label for="meetup-time">Время начала</label>
-                    <input type="time" id="meetup-time" required>
+                    <label>Время ожидания на месте</label>
+                    <input type="text" id="waiting_time" placeholder="Сколько ждете ребят на месте?" required>
                 </div>
+
                 <div class="form-group">
-                    <label for="meetup-location">Локация / Координаты</label>
-                    <input type="text" id="meetup-location" placeholder="Место сбора..." required>
+                    <label>3. Точное место сбора</label>
+                    <input type="text" id="p3_location" placeholder="Конкретное место, ссылка на Яндекс.Карты..." required>
                 </div>
+
                 <div class="form-group">
-                    <label for="meetup-organizer">Организатор(ы)</label>
-                    <input type="text" id="meetup-organizer" placeholder="Имена или никнеймы..." required>
+                    <label>4. Маршрут прогулки</label>
+                    <textarea id="p4_route" placeholder="Предполагаемый путь, описание или ссылка на карту..." required></textarea>
                 </div>
-                <button type="submit" class="btn-submit">Опубликовать</button>
+
+                <div class="form-group">
+                    <label>Дополнительные правила</label>
+                    <textarea id="p5_rules" placeholder="Например: нельзя бить Пряника арматурой..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>5. Юзер для связи (Telegram)</label>
+                    <input type="text" id="p6_contact" placeholder="@username для оперативной связи..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>6. Фото прошлых сходок (Файл)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="p7_file" accept="image/*" class="file-upload-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>7. Примечания и нюансы</label>
+                    <textarea id="p8_notes" placeholder="Любые другие важные детали..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Отправить на модерацию</button>
             </form>
         </main>
 
-        <!-- ПРАВАЯ КОЛОНКА -->
+        <!-- ПРАВАЯ КОЛОНКА: ОДОБРЕННЫЕ СХОДКИ -->
         <section class="events-column">
-            <div class="panel" style="padding: 25px; height: calc(100% - 52px);">
+            <div class="panel" style="padding: 25px; min-height: 500px;">
                 <h2><span>⚡</span> Актуальные расписания</h2>
                 <div id="meetups-container" class="meetups-grid"></div>
             </div>
@@ -278,21 +351,7 @@
 однако, в нашем мире достаточное количество негатива, провокаций и даже агрессии...😐
 данный комплекс рекомендаций поможет нам провести время спокойно и вайбово 👍
 
-1. не стоит приходить на сходку под воздействием алкоголя или других психоактивных веществ. это лишний повод для неадекватных людей, ищущих повод для драки/конфликта и правоохранителей, которые могут вас задержать по подозрению до выяснения ситуации.
-
-2. не стоит поддаваться на провокации с чьей либо стороны. помните, что наши сходки - это сходки друзей, а не бойцовский клуб и не бюро поиска конфликта. на все провокационные вопросы, заявления, "спросы" за что либо, реагируйте спокойно, по возможности - игнорируйте. 
-⚡️помните! В 99% случаев, конфликта и агрессивных действий можно избежать, если вести диалог более дипломатично, нежели собеседник. вы никому ничего не должны доказывать. одежда, обувь, стиль и субкультура - ваше личное дело и позиция.
-⛓не должно быть спроса за образ жизни и шмот - это неадекватно⛓
-
-3. держаться вместе на самой сходке, в туалеты ходить по гендерному признаку вместе, по возможности. после окончания сходки, очень желательно провожать каждого участника сходки, хотя бы до автобуса/метро. особенно девочек. можно заранее определить р-н проживания участников сходки и добираться до дома вместе. быть бдительными и обращать внимание, если за вами кто-то идет/преследует длительное время. нужно остановится в людном месте и подождать, пока человек/люди пройдут. 
-
-4. база - не быть провокатором и неадекватом. это могут быть разные действия, однако вы должны видеть грань и не переступать черту, если не хотите быть привлечены к ответственности или стать достоянием различных каналов и пабликов, которые выживают за счет данного фото/видеоматериала.
-
-5. оставаться в рамках закона. не бояться вызвать правоохранителей на место происшествия и зафиксировать факт нарушения законодательства, написать заявление. 
-
-6. иметь с собой средства самообороны и уверенно применять их, если на вас совершенно нападение. не давайте себя в обиду! 
-
-7. просим воздерживаться от употребления алкоголя. хотя бы, чтобы не нарушать закон. ведь места проведения сходок - это общественные места. 
+1. не стоит приходить на сходку под воздействием алкоголя или других психоактивных веществ...
 
 🎀 всем желаю хорошей сходки завтра и ярких, вайбовых эмоций! 
 мы как семья. только лучше 🖤</div>
@@ -306,27 +365,7 @@
 Дружеские сходки - это круто и весело, но не теряй бдительности!
 Даже на таких мероприятиях можно встретиться с опасностью 🌌
 
-Запомни 3 простых правила: 
-1. Ты не должен и не обязан делать то, что тебе не хочется! Даже если это говорит на сходке/пишет в мессенджере человек старше тебя!
-2. Ты обязан говорить «НЕТ» (особенно в ситуации телесного контакта)
-3. Ты должен громко звать на помощь, если находишься в опасности! 
-
-🖤 Если с тобой случилось что-то плохое:
-- Ты подвергся избиению или физическому насилию;
-- Твои границы прикосновений были нарушены (в частности прикосновения к интимным местам);
-- Ты подвергся сексуализированному насилию (это любые действия сексуального характера, от вербальных намёков, фраз, жестов до принудительного взаимодействия и принуждения);
-- Тебя угостили какими-либо неизвестными таблетками, напитками, порошком и тебе становится плохо;
-Ты находишь безопасное место и немедленно рассказываешь об этом полиции и родителям: 
-📞 112 — это общий номер для вызова полиции и скорой помощи.
-📞 8-800-2000-122 — Единый общероссийский номер детского телефона доверия (работает круглосуточно, бесплатно и анонимно).
-
-😁 еще несколько рекомендаций:
-🕷Не делись своими личными данными с малознакомыми ребятами.
-❓Не ходи к малознакомым ребятам на "вписки", к ним домой и т.п., а если идешь, то сообщи об этом родителям или друзьям, подробно рассказав куда и с кем ты направляешься.
-🥰Не пробуй и не принимай никакие таблетки, порошки, напитки и другие странные вещи, если тебе их предлагают. 
-🪷Если тебе некомфортно от каких либо действий конкретного человека - спокойно сообщи ему об этом. Если это не помогло - перестань с ним взаимодействовать. При необходимости покинь сходку.
-
-p.s. если в нашем чате или беседе состоит человек, который угрожает тебе, предлагает непристойные вещи - сообщи об этом в ЛС администратору 
+Запомни 3 простых правила...
 
 мы как семья. только лучше 🖤</div>
                 </div>
@@ -340,9 +379,6 @@ p.s. если в нашем чате или беседе состоит чело
 
 Только вайб 🖤
 Запрещена любая пропаганда суицида!
-
-112 — Единый номер экстренных служб 
-телефона доверия для детей и подростков: 8-800-2000-122
 
 вы не одиноки...</div>
                 </div>
@@ -361,32 +397,28 @@ p.s. если в нашем чате или беседе состоит чело
     </div>
 
     <script>
-        // Конфигурация Supabase проекта
         const SUPABASE_URL = "https://tltdvaoupzpwmykbdtvj.supabase.co";
         const SUPABASE_KEY = "sb_publishable_frytcYHJGFlhneyXXmqgnw_Lf1NkfqX";
         
-        // Инициализируем клиент
         const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-        // Секретные фразы для локальной верификации перед отправкой/удалением
-        const PUBLISH_PASSWORD = "труппа_создать";
         const DELETE_PASSWORD = "труппа_админ";
 
         const form = document.getElementById('create-meetup-form');
         const meetupsContainer = document.getElementById('meetups-container');
 
-        // Функция получения сходок из облачной базы данных
+        // Получаем ТОЛЬКО одобренные админом сходки (status === 'approved')
         async function fetchMeetups() {
             try {
                 const { data, error } = await _supabase
                     .from('meetups')
-                    .select('*');
+                    .select('*')
+                    .eq('status', 'approved');
 
                 if (error) throw error;
                 renderMeetups(data || []);
             } catch (err) {
-                console.error("Ошибка при получении данных из Supabase:", err);
-                meetupsContainer.innerHTML = '<div class="no-meetups" style="color:#ff5555;">Ошибка синхронизации с облаком. Проверьте структуру таблицы.</div>';
+                console.error(err);
+                meetupsContainer.innerHTML = '<div class="no-meetups">Ошибка связи с сервером Халлоунеста.</div>';
             }
         }
 
@@ -399,101 +431,121 @@ p.s. если в нашем чате или беседе состоит чело
             meetupsContainer.innerHTML = '';
 
             if (meetups.length === 0) {
-                meetupsContainer.innerHTML = '<div class="no-meetups">На горизонте тихо. Сходок пока не запланировано.</div>';
+                meetupsContainer.innerHTML = '<div class="no-meetups">Актуальных одобренных сходок пока нет.</div>';
                 return;
             }
 
-            // Сортируем сходки по дате и времени (ближайшие сверху)
-            meetups.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+            meetups.sort((a, b) => new Date(a.meetup_date + 'T' + a.meetup_time) - new Date(b.meetup_date + 'T' + b.meetup_time));
 
             meetups.forEach(meetup => {
                 const card = document.createElement('div');
                 card.className = 'meetup-card';
+                
+                let imgHtml = meetup.p7_photo_url ? `<img src="${meetup.p7_photo_url}" class="meetup-img" alt="Фото">` : '';
+
                 card.innerHTML = `
-                    <div class="meetup-info">
-                        <div class="meetup-meta-line">
-                            <span class="meetup-time">${meetup.time.substring(0,5)}</span>
-                            <span class="meetup-badge">${formatDate(meetup.date)}</span>
-                            <span class="meetup-organizer">Орг: ${meetup.organizer}</span>
+                    <div class="meetup-header-line">
+                        <div class="card-main-info">
+                            <span class="card-datetime">${meetup.meetup_time.substring(0,5)}</span>
+                            <div class="card-badges">
+                                <span class="badge-date">${formatDate(meetup.meetup_date)}</span>
+                                <span class="badge-org">${meetup.p6_contact}</span>
+                            </div>
                         </div>
-                        <div class="meetup-location">📍 ${meetup.location}</div>
+                        <button class="delete-btn" onclick="deleteMeetup('${meetup.id}')">Удалить</button>
                     </div>
-                    <button class="delete-btn" onclick="deleteMeetup('${meetup.id}')">Удалить</button>
+                    
+                    <div class="card-details-block">
+                        <div class="detail-item"><strong>1. Формат встречи:</strong> ${meetup.p1_greeting}</div>
+                        <div class="detail-item"><strong>2. Ожидание на месте:</strong> ${meetup.waiting_time}</div>
+                        <div class="detail-item"><strong>3. Точка сбора:</strong> ${meetup.p3_location}</div>
+                        <div class="detail-item"><strong>4. Маршрут:</strong> ${meetup.p4_route}</div>
+                        <div class="detail-item"><strong>Локальные правила:</strong> ${meetup.p5_rules}</div>
+                        ${imgHtml}
+                        ${meetup.p8_notes ? `<div class="detail-item"><strong>Примечания:</strong> ${meetup.p8_notes}</div>` : ''}
+                    </div>
                 `;
                 meetupsContainer.appendChild(card);
             });
         }
 
-        // Обработчик формы публикации
+        // Логика отправки с авто-загрузкой файла и статусом 'pending'
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
-            const password = prompt("Введите секретное слово для публикации события:");
-            if (password === null) return;
+            const submitBtn = form.querySelector('.btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Загрузка...";
 
-            if (password !== PUBLISH_PASSWORD) {
-                alert("Неверное кодовое слово. Публикация отклонена.");
-                return;
+            const fileInput = document.getElementById('p7_file');
+            let photoUrl = null;
+
+            // 1. Если файл прикреплен — грузим его в Storage
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `public/${fileName}`;
+
+                const { data: uploadData, error: uploadError } = await _supabase.storage
+                    .from('meetup-images')
+                    .upload(filePath, file);
+
+                if (!uploadError) {
+                    const { data: urlData } = _supabase.storage
+                        .from('meetup-images')
+                        .getPublicUrl(filePath);
+                    photoUrl = urlData.publicUrl;
+                } else {
+                    console.error("Ошибка загрузки файла:", uploadError);
+                }
             }
 
-            const date = document.getElementById('meetup-date').value;
-            const time = document.getElementById('meetup-time').value;
-            const location = document.getElementById('meetup-location').value;
-            const organizer = document.getElementById('meetup-organizer').value;
+            // 2. Формируем объект со статусом 'pending'
+            const meetupData = {
+                status: 'pending',
+                p1_greeting: document.getElementById('p1_greeting').value,
+                meetup_date: document.getElementById('meetup_date').value,
+                meetup_time: document.getElementById('meetup_time').value,
+                waiting_time: document.getElementById('waiting_time').value,
+                p3_location: document.getElementById('p3_location').value,
+                p4_route: document.getElementById('p4_route').value,
+                p5_rules: document.getElementById('p5_rules').value,
+                p6_contact: document.getElementById('p6_contact').value,
+                p7_photo_url: photoUrl,
+                p8_notes: document.getElementById('p8_notes').value
+            };
 
-            try {
-                // Добавляем запись напрямую в облачную таблицу `meetups`
-                const { error } = await _supabase
-                    .from('meetups')
-                    .insert([{ date, time, location, organizer }]);
+            // 3. Отправляем в базу
+            const { error } = await _supabase.from('meetups').insert([meetupData]);
 
-                if (error) throw error;
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Отправить на модерацию";
 
+            if (!error) {
+                alert("Данные успешно отправлены на модерацию руководителю Труппы! Ожидайте проверки.");
                 form.reset();
-                alert("Сходка добавлена в общее облако!");
-                fetchMeetups(); // Обновляем ленту у всех
-            } catch (err) {
-                console.error("Ошибка вставки в Supabase:", err);
-                alert("Не удалось сохранить в БД. Убедитесь, что таблица 'meetups' создана.");
+            } else {
+                alert("Произошла ошибка при отправке.");
+                console.error(error);
             }
         });
 
-        // Функция удаления из общей базы
-        window.deleteMeetup = function(id) {
-            const password = prompt("Введите секретный ключ администратора для удаления:");
-            if (password === null) return;
-
-            if (password === DELETE_PASSWORD) {
-                // Выполняем асинхронную операцию удаления по ID в Supabase
-                confirmDelete(id);
-            } else {
-                alert("Неверный ключ. Отказано в доступе.");
+        window.deleteMeetup = async function(id) {
+            const password = prompt("Введите секретный ключ администратора:");
+            if (password !== DELETE_PASSWORD) {
+                alert("Отказано в доступе.");
+                return;
             }
-        }
 
-        async function confirmDelete(id) {
-            try {
-                const { error } = await _supabase
-                    .from('meetups')
-                    .delete()
-                    .eq('id', id);
-
-                if (error) throw error;
-
-                alert("Событие удалено из облака.");
+            const { error } = await _supabase.from('meetups').delete().eq('id', id);
+            if (!error) {
+                alert("Удалено.");
                 fetchMeetups();
-            } catch (err) {
-                console.error("Ошибка удаления из Supabase:", err);
-                alert("Ошибка при удалении записи с сервера.");
             }
-        }
+        };
 
-        function toggleAccordion(element) {
-            const item = element.parentElement;
-            item.classList.toggle('active');
-        }
-
-        // Первичная загрузка актуальных сходок из облака при открытии хаба
+        function toggleAccordion(element) { element.parentElement.classList.toggle('active'); }
         fetchMeetups();
     </script>
 </body>
