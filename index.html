@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Труппа // Главный Хаб</title>
-    <!-- Официальный JS-клиент Supabase -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
@@ -163,7 +162,6 @@
         }
         
         .form-group textarea { resize: vertical; min-height: 70px; }
-        
         .form-group input:focus, .form-group textarea:focus { 
             outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); background: rgba(7, 9, 12, 0.95); 
         }
@@ -174,11 +172,6 @@
             gap: 15px;
         }
 
-        /* Кастомный стиль для загрузки файлов */
-        .file-upload-wrapper {
-            position: relative;
-            display: block;
-        }
         .file-upload-input {
             width: 100%; padding: 12px; background: rgba(7, 9, 12, 0.6); border: 1px dashed rgba(255,255,255,0.15); border-radius: 6px;
             color: var(--text-muted); font-size: 0.9rem; cursor: pointer; text-align: center; box-sizing: border-box;
@@ -199,7 +192,6 @@
         .meetup-card:hover { border-color: rgba(166, 239, 255, 0.2); background: rgba(16, 21, 26, 0.9); }
         
         .meetup-header-line { display: flex; justify-content: space-between; align-items: flex-start; gap: 15px; }
-        
         .card-main-info { display: flex; flex-direction: column; gap: 6px; }
         .card-datetime { font-size: 1.4rem; color: var(--text-primary); font-weight: normal; }
         .card-badges { display: flex; gap: 10px; align-items: center; margin-top: 4px; }
@@ -211,7 +203,7 @@
         }
         .detail-item strong { color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 2px; letter-spacing: 0.5px; }
         
-        .meetup-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-top: 5px; }
+        .meetup-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-top: 8px; }
 
         button.delete-btn {
             background: transparent; border: 1px solid rgba(234, 49, 90, 0.2); color: var(--accent-magenta); padding: 8px 14px; border-radius: 4px;
@@ -236,317 +228,4 @@
         footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
         .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .footer-link-card {
-            background: rgba(7, 9, 12, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 24px; border-radius: 6px;
-            color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
-        }
-        .footer-link-card:hover { border-color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); }
-        .footer-credits { font-size: 0.8rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
-        
-        .huescapist-credit {
-            font-size: 0.75rem; letter-spacing: 1px; text-decoration: none; color: rgba(255, 255, 255, 0.2);
-            transition: color 0.2s, text-shadow 0.2s; margin-top: -5px;
-        }
-        .huescapist-credit:hover { color: var(--accent-cyan); text-shadow: 0 0 8px rgba(166, 239, 255, 0.6); }
-
-        @keyframes fogMove { 0% { transform: translate(0, 0); } 50% { transform: translate(-25%, 5%); } 100% { transform: translate(0, 0); } }
-        @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { transform: translateY(-100vh) scale(1.2); opacity: 0; } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-    </style>
-</head>
-<body>
-
-    <div class="ambient-bg">
-        <div class="fog"></div>
-        <div class="particles">
-            <div class="particle p1"></div>
-            <div class="particle p2"></div>
-            <div class="particle p3"></div>
-            <div class="particle p4"></div>
-            <div class="particle p5"></div>
-        </div>
-    </div>
-
-    <div class="wrapper">
-        <header>
-            <h1>Труппа</h1>
-            <div class="status-badge">Защищенный Контур</div>
-        </header>
-
-        <!-- ЛЕВАЯ КОЛОНКА: СТРУКТУРИРОВАННАЯ ФОРМА МОДЕРАЦИИ -->
-        <main class="panel">
-            <h2><span>＋</span> Назначить сходку</h2>
-            <form id="create-meetup-form">
-                
-                <div class="form-group">
-                    <label>1. Описание события</label>
-                    <textarea id="p1_greeting" placeholder="Приветствие, формат (прогулка, большая сходка или поиск друзей)..." required></textarea>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label>2. Дата сбора</label>
-                        <input type="date" id="meetup_date" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Время сбора</label>
-                        <input type="time" id="meetup_time" required>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>Время ожидания на месте</label>
-                    <input type="text" id="waiting_time" placeholder="Сколько ждете ребят на месте?" required>
-                </div>
-
-                <div class="form-group">
-                    <label>3. Точное место сбора</label>
-                    <input type="text" id="p3_location" placeholder="Конкретное место, ссылка на Яндекс.Карты..." required>
-                </div>
-
-                <div class="form-group">
-                    <label>4. Маршрут прогулки</label>
-                    <textarea id="p4_route" placeholder="Предполагаемый путь, описание или ссылка на карту..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>Дополнительные правила</label>
-                    <textarea id="p5_rules" placeholder="Например: нельзя бить Пряника арматурой..." required></textarea>
-                </div>
-
-                <div class="form-group">
-                    <label>5. Юзер для связи (Telegram)</label>
-                    <input type="text" id="p6_contact" placeholder="@username для оперативной связи..." required>
-                </div>
-
-                <div class="form-group">
-                    <label>6. Фото прошлых сходок (Файл)</label>
-                    <div class="file-upload-wrapper">
-                        <input type="file" id="p7_file" accept="image/*" class="file-upload-input">
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <label>7. Примечания и нюансы</label>
-                    <textarea id="p8_notes" placeholder="Любые другие важные детали..."></textarea>
-                </div>
-
-                <button type="submit" class="btn-submit">Отправить на модерацию</button>
-            </form>
-        </main>
-
-        <!-- ПРАВАЯ КОЛОНКА: ОДОБРЕННЫЕ СХОДКИ -->
-        <section class="events-column">
-            <div class="panel" style="padding: 25px; min-height: 500px;">
-                <h2><span>⚡</span> Актуальные расписания</h2>
-                <div id="meetups-container" class="meetups-grid"></div>
-            </div>
-        </section>
-
-        <!-- АККОРДЕОНЫ -->
-        <section class="accordion-section">
-            <div class="accordion-item">
-                <button class="accordion-trigger" onclick="toggleAccordion(this)">Комплекс рекомендаций для сходок</button>
-                <div class="accordion-content">
-                    <div class="accordion-body">🐈наши дружеские сходки стали регулярными в Москве и это замечательно 🖤
-однако, в нашем мире достаточное количество негатива, провокаций и даже агрессии...😐
-данный комплекс рекомендаций поможет нам провести время спокойно и вайбово 👍
-
-1. не стоит приходить на сходку под воздействием алкоголя или других психоактивных веществ...
-
-🎀 всем желаю хорошей сходки завтра и ярких, вайбовых эмоций! 
-мы как семья. только лучше 🖤</div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-trigger" onclick="toggleAccordion(this)">Памятка для несовершеннолетних</button>
-                <div class="accordion-content">
-                    <div class="accordion-body">Памятка для несовершеннолетних 😲
-Дружеские сходки - это круто и весело, но не теряй бдительности!
-Даже на таких мероприятиях можно встретиться с опасностью 🌌
-
-Запомни 3 простых правила...
-
-мы как семья. только лучше 🖤</div>
-                </div>
-            </div>
-
-            <div class="accordion-item">
-                <button class="accordion-trigger" onclick="toggleAccordion(this)">Ресурсы и каналы Труппы</button>
-                <div class="accordion-content">
-                    <div class="accordion-body">Тг канал: t.me/troupe1x3
-правила: telegra.ph/Obshchie-polozheniya-Besedy-Laskovyj-kit-08-27
-
-Только вайб 🖤
-Запрещена любая пропаганда суицида!
-
-вы не одиноки...</div>
-                </div>
-            </div>
-        </section>
-
-        <footer>
-            <div class="footer-links">
-                <a href="https://t.me/LaskoviyKit" target="_blank" class="footer-link-card">💬 Ласковая беседа</a>
-                <a href="https://t.me/addstickers/Truppa_MOMENTY" target="_blank" class="footer-link-card">✨ Стикеры</a>
-                <a href="https://t.me/+KEV4GGNihfo0Yjg6" target="_blank" class="footer-link-card">📦 Хранилище материала</a>
-            </div>
-            <div class="footer-credits">ТРУППА // 2026</div>
-            <a href="https://huescapist.github.io/portfolio/" target="_blank" class="huescapist-credit">created by huescapist</a>
-        </footer>
-    </div>
-
-    <script>
-        const SUPABASE_URL = "https://tltdvaoupzpwmykbdtvj.supabase.co";
-        const SUPABASE_KEY = "sb_publishable_frytcYHJGFlhneyXXmqgnw_Lf1NkfqX";
-        
-        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-        const DELETE_PASSWORD = "труппа_админ";
-
-        const form = document.getElementById('create-meetup-form');
-        const meetupsContainer = document.getElementById('meetups-container');
-
-        // Получаем ТОЛЬКО одобренные админом сходки (status === 'approved')
-        async function fetchMeetups() {
-            try {
-                const { data, error } = await _supabase
-                    .from('meetups')
-                    .select('*')
-                    .eq('status', 'approved');
-
-                if (error) throw error;
-                renderMeetups(data || []);
-            } catch (err) {
-                console.error(err);
-                meetupsContainer.innerHTML = '<div class="no-meetups">Ошибка связи с сервером Халлоунеста.</div>';
-            }
-        }
-
-        function formatDate(dateStr) {
-            const options = { month: 'short', day: 'numeric', weekday: 'short' };
-            return new Date(dateStr).toLocaleDateString('ru-RU', options);
-        }
-
-        function renderMeetups(meetups) {
-            meetupsContainer.innerHTML = '';
-
-            if (meetups.length === 0) {
-                meetupsContainer.innerHTML = '<div class="no-meetups">Актуальных одобренных сходок пока нет.</div>';
-                return;
-            }
-
-            meetups.sort((a, b) => new Date(a.meetup_date + 'T' + a.meetup_time) - new Date(b.meetup_date + 'T' + b.meetup_time));
-
-            meetups.forEach(meetup => {
-                const card = document.createElement('div');
-                card.className = 'meetup-card';
-                
-                let imgHtml = meetup.p7_photo_url ? `<img src="${meetup.p7_photo_url}" class="meetup-img" alt="Фото">` : '';
-
-                card.innerHTML = `
-                    <div class="meetup-header-line">
-                        <div class="card-main-info">
-                            <span class="card-datetime">${meetup.meetup_time.substring(0,5)}</span>
-                            <div class="card-badges">
-                                <span class="badge-date">${formatDate(meetup.meetup_date)}</span>
-                                <span class="badge-org">${meetup.p6_contact}</span>
-                            </div>
-                        </div>
-                        <button class="delete-btn" onclick="deleteMeetup('${meetup.id}')">Удалить</button>
-                    </div>
-                    
-                    <div class="card-details-block">
-                        <div class="detail-item"><strong>1. Формат встречи:</strong> ${meetup.p1_greeting}</div>
-                        <div class="detail-item"><strong>2. Ожидание на месте:</strong> ${meetup.waiting_time}</div>
-                        <div class="detail-item"><strong>3. Точка сбора:</strong> ${meetup.p3_location}</div>
-                        <div class="detail-item"><strong>4. Маршрут:</strong> ${meetup.p4_route}</div>
-                        <div class="detail-item"><strong>Локальные правила:</strong> ${meetup.p5_rules}</div>
-                        ${imgHtml}
-                        ${meetup.p8_notes ? `<div class="detail-item"><strong>Примечания:</strong> ${meetup.p8_notes}</div>` : ''}
-                    </div>
-                `;
-                meetupsContainer.appendChild(card);
-            });
-        }
-
-        // Логика отправки с авто-загрузкой файла и статусом 'pending'
-        form.addEventListener('submit', async (e) => {
-            e.preventDefault();
-
-            const submitBtn = form.querySelector('.btn-submit');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "Загрузка...";
-
-            const fileInput = document.getElementById('p7_file');
-            let photoUrl = null;
-
-            // 1. Если файл прикреплен — грузим его в Storage
-            if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                const filePath = `public/${fileName}`;
-
-                const { data: uploadData, error: uploadError } = await _supabase.storage
-                    .from('meetup-images')
-                    .upload(filePath, file);
-
-                if (!uploadError) {
-                    const { data: urlData } = _supabase.storage
-                        .from('meetup-images')
-                        .getPublicUrl(filePath);
-                    photoUrl = urlData.publicUrl;
-                } else {
-                    console.error("Ошибка загрузки файла:", uploadError);
-                }
-            }
-
-            // 2. Формируем объект со статусом 'pending'
-            const meetupData = {
-                status: 'pending',
-                p1_greeting: document.getElementById('p1_greeting').value,
-                meetup_date: document.getElementById('meetup_date').value,
-                meetup_time: document.getElementById('meetup_time').value,
-                waiting_time: document.getElementById('waiting_time').value,
-                p3_location: document.getElementById('p3_location').value,
-                p4_route: document.getElementById('p4_route').value,
-                p5_rules: document.getElementById('p5_rules').value,
-                p6_contact: document.getElementById('p6_contact').value,
-                p7_photo_url: photoUrl,
-                p8_notes: document.getElementById('p8_notes').value
-            };
-
-            // 3. Отправляем в базу
-            const { error } = await _supabase.from('meetups').insert([meetupData]);
-
-            submitBtn.disabled = false;
-            submitBtn.innerText = "Отправить на модерацию";
-
-            if (!error) {
-                alert("Данные успешно отправлены на модерацию руководителю Труппы! Ожидайте проверки.");
-                form.reset();
-            } else {
-                alert("Произошла ошибка при отправке.");
-                console.error(error);
-            }
-        });
-
-        window.deleteMeetup = async function(id) {
-            const password = prompt("Введите секретный ключ администратора:");
-            if (password !== DELETE_PASSWORD) {
-                alert("Отказано в доступе.");
-                return;
-            }
-
-            const { error } = await _supabase.from('meetups').delete().eq('id', id);
-            if (!error) {
-                alert("Удалено.");
-                fetchMeetups();
-            }
-        };
-
-        function toggleAccordion(element) { element.parentElement.classList.toggle('active'); }
-        fetchMeetups();
-    </script>
-</body>
-</html>
+            background: rgba(7,
