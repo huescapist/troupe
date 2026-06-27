@@ -24,47 +24,31 @@
             font-family: var(--font), sans-serif;
             background-color: var(--bg-main);
             color: var(--text-primary);
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: flex-start;
-            overflow-x: hidden;
-            position: relative;
+            display: flex; justify-content: center; align-items: flex-start;
+            overflow-x: hidden; position: relative;
         }
 
         .ambient-bg {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -1;
-            overflow: hidden;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1; overflow: hidden;
             background: radial-gradient(circle at 50% 30%, #161c24 0%, #0c0f12 80%);
         }
 
         .fog {
-            position: absolute;
-            top: 0; left: 0; width: 200%; height: 100%;
+            position: absolute; top: 0; left: 0; width: 200%; height: 100%;
             background: radial-gradient(circle at 30% 50%, rgba(166, 239, 255, 0.03) 0%, transparent 40%),
                         radial-gradient(circle at 70% 80%, rgba(234, 49, 90, 0.02) 0%, transparent 40%);
-            opacity: 0.7;
-            animation: fogMove 40s linear infinite;
+            opacity: 0.7; animation: fogMove 40s linear infinite;
         }
 
-        .particles {
-            position: absolute;
-            width: 100%; height: 100%; top: 0; left: 0;
-        }
-
+        .particles { position: absolute; width: 100%; height: 100%; top: 0; left: 0; }
         .particle {
-            position: absolute;
-            border-radius: 50%;
-            background: rgba(166, 239, 255, 0.3);
-            box-shadow: 0 0 10px rgba(166, 239, 255, 0.6);
-            animation: floatUp 12s infinite linear;
-            bottom: -20px;
+            position: absolute; border-radius: 50%;
+            background: rgba(166, 239, 255, 0.3); box-shadow: 0 0 10px rgba(166, 239, 255, 0.6);
+            animation: floatUp 12s infinite linear; bottom: -20px;
         }
-
         .p1 { left: 10%; width: 4px; height: 4px; animation-duration: 14s; animation-delay: 1s; }
         .p2 { left: 30%; width: 6px; height: 6px; animation-duration: 18s; animation-delay: 5s; background: rgba(234, 49, 90, 0.2); box-shadow: 0 0 10px rgba(234, 49, 90, 0.5); }
         .p3 { left: 55%; width: 3px; height: 3px; animation-duration: 12s; animation-delay: 0s; }
@@ -72,15 +56,8 @@
         .p5 { left: 90%; width: 4px; height: 4px; animation-duration: 20s; animation-delay: 7s; }
 
         .wrapper {
-            width: 100%;
-            max-width: 1100px;
-            padding: 50px 20px;
-            box-sizing: border-box;
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 35px;
-            position: relative;
-            z-index: 1;
+            width: 100%; max-width: 1100px; padding: 50px 20px; box-sizing: border-box;
+            display: grid; grid-template-columns: 1fr; gap: 35px; position: relative; z-index: 1;
         }
 
         @media (min-width: 900px) {
@@ -88,65 +65,30 @@
             header, .accordion-section, footer { grid-column: 1 / -1; }
         }
 
-        header {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-            padding-bottom: 25px;
-        }
-
-        @media (min-width: 480px) {
-            header { flex-direction: row; align-items: center; justify-content: space-between; }
-        }
+        header { display: flex; flex-direction: column; gap: 10px; border-bottom: 1px solid rgba(255, 255, 255, 0.05); padding-bottom: 25px; }
+        @media (min-width: 480px) { header { flex-direction: row; align-items: center; justify-content: space-between; } }
 
         header h1 {
-            font-size: 2.4rem;
-            font-weight: normal;
-            text-transform: uppercase;
-            letter-spacing: 8px;
-            margin: 0;
+            font-size: 2.4rem; font-weight: normal; text-transform: uppercase; letter-spacing: 8px; margin: 0;
             background: linear-gradient(180deg, #ffffff 30%, #a6efff 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 0 0 20px rgba(166,239,255,0.2);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 0 20px rgba(166,239,255,0.2);
         }
 
         .status-badge {
-            font-size: 0.7rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            background: rgba(234, 49, 90, 0.1);
-            color: var(--accent-magenta);
-            padding: 6px 14px;
-            border-radius: 4px;
-            border: 1px solid rgba(234, 49, 90, 0.2);
-            font-weight: 700;
-            width: fit-content;
+            font-size: 0.7rem; text-transform: uppercase; letter-spacing: 2px;
+            background: rgba(234, 49, 90, 0.1); color: var(--accent-magenta);
+            padding: 6px 14px; border-radius: 4px; border: 1px solid rgba(234, 49, 90, 0.2); font-weight: 700; width: fit-content;
         }
 
         .panel {
-            background: var(--panel-bg);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--panel-border);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-            box-shadow: inset 0 0 20px rgba(0,0,0,0.6);
+            background: var(--panel-bg); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--panel-border); border-radius: 12px; padding: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5), inset 0 0 20px rgba(0,0,0,0.6);
         }
 
         .panel h2 {
-            font-size: 1.1rem;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            margin-top: 0;
-            margin-bottom: 25px;
-            color: var(--accent-cyan);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: normal;
+            font-size: 1.1rem; text-transform: uppercase; letter-spacing: 3px; margin-top: 0; margin-bottom: 25px;
+            color: var(--accent-cyan); display: flex; align-items: center; gap: 10px; font-weight: normal;
             text-shadow: 0 0 10px rgba(166, 239, 255, 0.3);
         }
 
@@ -160,17 +102,12 @@
             width: 100%; padding: 12px 14px; background: rgba(7, 9, 12, 0.8); border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 6px;
             color: var(--text-primary); font-family: inherit; font-size: 0.95rem; box-sizing: border-box; transition: all 0.25s ease;
         }
-        
         .form-group textarea { resize: vertical; min-height: 70px; }
         .form-group input:focus, .form-group textarea:focus { 
             outline: none; border-color: var(--accent-cyan); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); background: rgba(7, 9, 12, 0.95); 
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
 
         .file-upload-input {
             width: 100%; padding: 12px; background: rgba(7, 9, 12, 0.6); border: 1px dashed rgba(255,255,255,0.15); border-radius: 6px;
@@ -228,4 +165,330 @@
         footer { border-top: 1px solid rgba(255, 255, 255, 0.05); padding-top: 30px; margin-top: 20px; display: flex; flex-direction: column; gap: 20px; align-items: center; }
         .footer-links { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
         .footer-link-card {
-            background: rgba(7,
+            background: rgba(7, 9, 12, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 24px; border-radius: 6px;
+            color: var(--accent-cyan); text-decoration: none; font-size: 0.9rem; transition: all 0.2s; display: flex; align-items: center; gap: 8px;
+        }
+        .footer-link-card:hover { border-color: var(--accent-cyan); background: rgba(166, 239, 255, 0.05); box-shadow: 0 0 10px rgba(166, 239, 255, 0.15); }
+        .footer-credits { font-size: 0.8rem; color: var(--text-dark); text-transform: uppercase; letter-spacing: 2px; margin-bottom: 5px; }
+        
+        .huescapist-credit {
+            font-size: 0.75rem; letter-spacing: 1px; text-decoration: none; color: rgba(255, 255, 255, 0.2);
+            transition: color 0.2s, text-shadow 0.2s; margin-top: -5px;
+        }
+        .huescapist-credit:hover { color: var(--accent-cyan); text-shadow: 0 0 8px rgba(166, 239, 255, 0.6); }
+
+        @keyframes fogMove { 0% { transform: translate(0, 0); } 50% { transform: translate(-25%, 5%); } 100% { transform: translate(0, 0); } }
+        @keyframes floatUp { 0% { transform: translateY(0) scale(0.8); opacity: 0; } 10% { opacity: 0.4; } 90% { opacity: 0.4; } 100% { transform: translateY(-100vh) scale(1.2); opacity: 0; } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+    <div class="ambient-bg">
+        <div class="fog"></div>
+        <div class="particles">
+            <div class="particle p1"></div>
+            <div class="particle p2"></div>
+            <div class="particle p3"></div>
+            <div class="particle p4"></div>
+            <div class="particle p5"></div>
+        </div>
+    </div>
+
+    <div class="wrapper">
+        <header>
+            <h1>Труппа</h1>
+            <div class="status-badge">Защищенный Контур</div>
+        </header>
+
+        <main class="panel">
+            <h2><span>＋</span> Назначить сходку</h2>
+            <form id="create-meetup-form">
+                <div class="form-group">
+                    <label>1. Описание события</label>
+                    <textarea id="p1_greeting" placeholder="Приветствие, формат (прогулка, большая сходка или поиск друзей)..." required></textarea>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label>2. Дата сбора</label>
+                        <input type="date" id="meetup_date" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Время сбора</label>
+                        <input type="time" id="meetup_time" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Время ожидания на месте</label>
+                    <input type="text" id="waiting_time" placeholder="Сколько ждете ребят на месте?" required>
+                </div>
+
+                <div class="form-group">
+                    <label>3. Точное место сбора</label>
+                    <input type="text" id="p3_location" placeholder="Конкретное место, ссылка на Яндекс.Карты..." required></input>
+                </div>
+
+                <div class="form-group">
+                    <label>4. Маршрут прогулки</label>
+                    <textarea id="p4_route" placeholder="Предполагаемый путь, описание или ссылка на карту..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Дополнительные правила</label>
+                    <textarea id="p5_rules" placeholder="Например: нельзя бить Пряника арматурой..." required></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>5. Юзер для связи (Telegram)</label>
+                    <input type="text" id="p6_contact" placeholder="@username для оперативной связи..." required>
+                </div>
+
+                <div class="form-group">
+                    <label>6. Фото прошлых сходок (Файл)</label>
+                    <div class="file-upload-wrapper">
+                        <input type="file" id="p7_file" accept="image/*" class="file-upload-input">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>7. Примечания и нюансы</label>
+                    <textarea id="p8_notes" placeholder="Любые другие важные детали..."></textarea>
+                </div>
+
+                <button type="submit" class="btn-submit">Отправить на модерацию</button>
+            </form>
+        </main>
+
+        <section class="events-column">
+            <div class="panel" style="padding: 25px; min-height: 500px;">
+                <h2><span>⚡</span> Актуальные расписания</h2>
+                <div id="meetups-container" class="meetups-grid"></div>
+            </div>
+        </section>
+
+        <section class="accordion-section">
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Комплекс рекомендаций для сходок</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">🐈наши дружеские сходки стали регулярными в Москве и это замечательно 🖤
+однако, в нашем мире достаточное количество негатива, провокаций и даже агрессии...😐
+данный комплекс рекомендаций поможет нам провести время спокойно и вайбово 👍
+
+1. не стоит приходить на сходку под воздействием алкоголя или других психоактивных веществ. это лишний повод для неадекватных людей, ищущих повод для драки/конфликта и правоохранителей.
+
+2. не стоит поддаваться на провокации с чьей либо стороны. помните, что наши сходки - это сходки друзей, а не бойцовский клуб. на все провокационные вопросы, заявления реагируйте спокойно, по возможности - игнорируйте. 
+
+3. держаться вместе на самой сходке. после окончания сходки, очень желательно провожать каждого участника сходки, хотя бы до автобуса/метро. особенно девочек.
+
+4. база - не быть провокатором и неадекватом. вы должны видеть грань и не переступать черту.
+
+5. оставаться в рамках закона. не бояться вызвать правоохранителей на место происшествия.
+
+6. иметь с собой средства самообороны и уверенно применять их, если на вас совершенно нападение. не damage себя в обиду! 
+
+7. просим воздерживаться от употребления алкоголя.
+
+🎀 всем желаю хорошей сходки завтра и ярких, вайбовых эмоций! мы как семья. только лучше 🖤</div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Памятка для несовершеннолетних</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">Памятка для несовершеннолетних 😲
+Дружеские сходки - это круто и весело, но не теряй бдительности!
+
+Запомни 3 простых правила: 
+1. Ты не должен и не обязан делать то, что тебе не хочется!
+2. Ты обязан говорить «НЕТ» (особенно в ситуации телесного контакта)
+3. Ты должен громко звать на помощь, если находишься в опасности! 
+
+📞 112 — это общий номер для вызова полиции и скорой помощи.
+📞 8-800-2000-122 — Единый общероссийский номер детского телефона доверия.
+
+мы как семья. только лучше 🖤</div>
+                </div>
+            </div>
+
+            <div class="accordion-item">
+                <button class="accordion-trigger" onclick="toggleAccordion(this)">Ресурсы и каналы Труппы</button>
+                <div class="accordion-content">
+                    <div class="accordion-body">Тг канал: t.me/troupe1x3
+правила: telegra.ph/Obshchie-polozheniya-Besedy-Laskovyj-kit-08-27
+
+Только вайб 🖤
+Запрещена любая пропаганда суицида!
+
+вы не одиноки...</div>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <div class="footer-links">
+                <a href="https://t.me/LaskoviyKit" target="_blank" class="footer-link-card">💬 Ласковая беседа</a>
+                <a href="https://t.me/addstickers/Truppa_MOMENTY" target="_blank" class="footer-link-card">✨ Стикеры</a>
+                <a href="https://t.me/+KEV4GGNihfo0Yjg6" target="_blank" class="footer-link-card">📦 Хранилище материала</a>
+            </div>
+            <div class="footer-credits">ТРУППА // 2026</div>
+            <a href="https://huescapist.github.io/portfolio/" target="_blank" class="huescapist-credit">created by huescapist</a>
+        </footer>
+    </div>
+
+    <script>
+        const SUPABASE_URL = "https://tltdvaoupzpwmykbdtvj.supabase.co";
+        const SUPABASE_KEY = "sb_publishable_frytcYHJGFlhneyXXmqgnw_Lf1NkfqX";
+        
+        const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+        const DELETE_PASSWORD = "труппа_админ";
+
+        const form = document.getElementById('create-meetup-form');
+        const meetupsContainer = document.getElementById('meetups-container');
+
+        async function fetchMeetups() {
+            try {
+                const { data, error } = await _supabase
+                    .from('meetups')
+                    .select('*')
+                    .eq('status', 'approved');
+
+                if (error) throw error;
+                renderMeetups(data || []);
+            } catch (err) {
+                console.error(err);
+                meetupsContainer.innerHTML = '<div class="no-meetups">Ошибка связи с сервером базы данных.</div>';
+            }
+        }
+
+        function formatDate(dateStr) {
+            if (!dateStr) return '';
+            const options = { month: 'short', day: 'numeric', weekday: 'short' };
+            return new Date(dateStr).toLocaleDateString('ru-RU', options);
+        }
+
+        function renderMeetups(meetups) {
+            meetupsContainer.innerHTML = '';
+
+            if (meetups.length === 0) {
+                meetupsContainer.innerHTML = '<div class="no-meetups">Актуальных одобренных сходок пока нет.</div>';
+                return;
+            }
+
+            meetups.sort((a, b) => {
+                const dateA = a.meetup_date || '1970-01-01';
+                const dateB = b.meetup_date || '1970-01-01';
+                const timeA = a.meetup_time ? a.meetup_time.substring(0, 5) : '00:00';
+                const timeB = b.meetup_time ? b.meetup_time.substring(0, 5) : '00:00';
+                return new Date(`${dateA}T${timeA}`) - new Date(`${dateB}T${timeB}`);
+            });
+
+            meetups.forEach(meetup => {
+                const card = document.createElement('div');
+                card.className = 'meetup-card';
+                
+                let imgHtml = meetup.p7_photo_url ? `<img src="${meetup.p7_photo_url}" class="meetup-img" alt="Фото">` : '';
+                let displayTime = meetup.meetup_time ? meetup.meetup_time.substring(0, 5) : '00:00';
+
+                card.innerHTML = `
+                    <div class="meetup-header-line">
+                        <div class="card-main-info">
+                            <span class="card-datetime">${displayTime}</span>
+                            <div class="card-badges">
+                                <span class="badge-date">${formatDate(meetup.meetup_date)}</span>
+                                <span class="badge-org">${meetup.p6_contact}</span>
+                            </div>
+                        </div>
+                        <button class="delete-btn" onclick="deleteMeetup('${meetup.id}')">Удалить</button>
+                    </div>
+                    
+                    <div class="card-details-block">
+                        <div class="detail-item"><strong>1. Формат встречи:</strong> ${meetup.p1_greeting}</div>
+                        <div class="detail-item"><strong>2. Ожидание на месте:</strong> ${meetup.waiting_time}</div>
+                        <div class="detail-item"><strong>3. Точка сбора:</strong> ${meetup.p3_location}</div>
+                        <div class="detail-item"><strong>4. Маршрут:</strong> ${meetup.p4_route}</div>
+                        <div class="detail-item"><strong>Локальные правила:</strong> ${meetup.p5_rules}</div>
+                        ${imgHtml}
+                        ${meetup.p8_notes ? `<div class="detail-item"><strong>Примечания:</strong> ${meetup.p8_notes}</div>` : ''}
+                    </div>
+                `;
+                meetupsContainer.appendChild(card);
+            });
+        }
+
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const submitBtn = form.querySelector('.btn-submit');
+            submitBtn.disabled = true;
+            submitBtn.innerText = "Загрузка медиа...";
+
+            const fileInput = document.getElementById('p7_file');
+            let photoUrl = null;
+
+            if (fileInput.files.length > 0) {
+                const file = fileInput.files[0];
+                const fileExt = file.name.split('.').pop();
+                const fileName = `${Date.now()}.${fileExt}`;
+                const filePath = `public/${fileName}`;
+
+                const { data: uploadData, error: uploadError } = await _supabase.storage
+                    .from('meetup-images')
+                    .upload(filePath, file);
+
+                if (!uploadError) {
+                    const { data: urlData } = _supabase.storage
+                        .from('meetup-images')
+                        .getPublicUrl(filePath);
+                    photoUrl = urlData.publicUrl;
+                }
+            }
+
+            const meetupData = {
+                status: 'pending',
+                p1_greeting: document.getElementById('p1_greeting').value,
+                meetup_date: document.getElementById('meetup_date').value,
+                meetup_time: document.getElementById('meetup_time').value,
+                waiting_time: document.getElementById('waiting_time').value,
+                p3_location: document.getElementById('p3_location').value,
+                p4_route: document.getElementById('p4_route').value,
+                p5_rules: document.getElementById('p5_rules').value,
+                p6_contact: document.getElementById('p6_contact').value,
+                p7_photo_url: photoUrl,
+                p8_notes: document.getElementById('p8_notes').value
+            };
+
+            const { error } = await _supabase.from('meetups').insert([meetupData]);
+
+            submitBtn.disabled = false;
+            submitBtn.innerText = "Отправить на модерацию";
+
+            if (!error) {
+                alert("Данные успешно отправлены на модерацию руководителю Труппы! Ожидайте проверки.");
+                form.reset();
+            } else {
+                alert("Ошибка отправки данных.");
+                console.error(error);
+            }
+        });
+
+        window.deleteMeetup = async function(id) {
+            const password = prompt("Введите секретный ключ администратора:");
+            if (password !== DELETE_PASSWORD) {
+                alert("Отказано в доступе.");
+                return;
+            }
+
+            const { error } = await _supabase.from('meetups').delete().eq('id', id);
+            if (!error) {
+                alert("Сходка удалена.");
+                fetchMeetups();
+            }
+        };
+
+        function toggleAccordion(element) { element.parentElement.classList.toggle('active'); }
+        fetchMeetups();
+    </script>
+</body>
+</html>
