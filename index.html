@@ -140,7 +140,8 @@
         }
         .detail-item strong { color: var(--text-muted); text-transform: uppercase; font-size: 0.8rem; display: block; margin-bottom: 2px; letter-spacing: 0.5px; }
         
-        .meetup-img { width: 100%; max-height: 350px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); margin-top: 8px; }
+        .meetup-images-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-top: 8px; }
+        .meetup-img { width: 100%; max-height: 220px; object-fit: cover; border-radius: 6px; border: 1px solid rgba(255,255,255,0.05); }
 
         button.delete-btn {
             background: transparent; border: 1px solid rgba(234, 49, 90, 0.2); color: var(--accent-magenta); padding: 8px 14px; border-radius: 4px;
@@ -227,7 +228,7 @@
 
                 <div class="form-group">
                     <label>3. Точное место сбора</label>
-                    <input type="text" id="p3_location" placeholder="Конкретное место, ссылка на Яндекс.Карты..." required></input>
+                    <input type="text" id="p3_location" placeholder="Конкретное место, ссылка на Яндекс.Карты..." required>
                 </div>
 
                 <div class="form-group">
@@ -246,9 +247,9 @@
                 </div>
 
                 <div class="form-group">
-                    <label>6. Фото прошлых сходок (Файл)</label>
+                    <label>6. Фото прошлых сходок (Можно выбрать несколько)</label>
                     <div class="file-upload-wrapper">
-                        <input type="file" id="p7_file" accept="image/*" class="file-upload-input">
+                        <input type="file" id="p7_file" accept="image/*" class="file-upload-input" multiple>
                     </div>
                 </div>
 
@@ -286,7 +287,7 @@
 
 5. оставаться в рамках закона. не бояться вызвать правоохранителей на место происшествия.
 
-6. иметь с собой средства самообороны и уверенно применять их, если на вас совершенно нападение. не damage себя в обиду! 
+6. иметь с собой средства самообороны и уверенно применять их, если на вас совершенно нападение. не давайте себя в обиду! 
 
 7. просим воздерживаться от употребления алкоголя.
 
@@ -388,7 +389,17 @@
                 const card = document.createElement('div');
                 card.className = 'meetup-card';
                 
-                let imgHtml = meetup.p7_photo_url ? `<img src="${meetup.p7_photo_url}" class="meetup-img" alt="Фото">` : '';
+                // Рендеринг пачки изображений, если они сохранены через запятую
+                let imagesHtml = '';
+                if (meetup.p7_photo_url) {
+                    const urls = meetup.p7_photo_url.split(',');
+                    imagesHtml = '<div class="meetup-images-container">';
+                    urls.forEach(url => {
+                        imagesHtml += `<img src="${url.trim()}" class="meetup-img" alt="Фото">`;
+                    });
+                    imagesHtml += '</div>';
+                }
+
                 let displayTime = meetup.meetup_time ? meetup.meetup_time.substring(0, 5) : '00:00';
 
                 card.innerHTML = `
@@ -409,7 +420,7 @@
                         <div class="detail-item"><strong>3. Точка сбора:</strong> ${meetup.p3_location}</div>
                         <div class="detail-item"><strong>4. Маршрут:</strong> ${meetup.p4_route}</div>
                         <div class="detail-item"><strong>Локальные правила:</strong> ${meetup.p5_rules}</div>
-                        ${imgHtml}
+                        ${imagesHtml}
                         ${meetup.p8_notes ? `<div class="detail-item"><strong>Примечания:</strong> ${meetup.p8_notes}</div>` : ''}
                     </div>
                 `;
@@ -417,33 +428,42 @@
             });
         }
 
+        // Логика циклической отправки нескольких картинок
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const submitBtn = form.querySelector('.btn-submit');
             submitBtn.disabled = true;
-            submitBtn.innerText = "Загрузка медиа...";
+            submitBtn.innerText = "Загрузка медиафайлов...";
 
             const fileInput = document.getElementById('p7_file');
-            let photoUrl = null;
+            let uploadedUrls = [];
 
             if (fileInput.files.length > 0) {
-                const file = fileInput.files[0];
-                const fileExt = file.name.split('.').pop();
-                const fileName = `${Date.now()}.${fileExt}`;
-                const filePath = `public/${fileName}`;
+                // Проходимся циклом по каждому выбранному файлу
+                for (let i = 0; i < fileInput.files.length; i++) {
+                    const file = fileInput.files[i];
+                    const fileExt = file.name.split('.').pop();
+                    const fileName = `${Date.now()}_${i}.${fileExt}`;
+                    const filePath = `public/${fileName}`;
 
-                const { data: uploadData, error: uploadError } = await _supabase.storage
-                    .from('meetup-images')
-                    .upload(filePath, file);
-
-                if (!uploadError) {
-                    const { data: urlData } = _supabase.storage
+                    const { data: uploadData, error: uploadError } = await _supabase.storage
                         .from('meetup-images')
-                        .getPublicUrl(filePath);
-                    photoUrl = urlData.publicUrl;
+                        .upload(filePath, file);
+
+                    if (!uploadError) {
+                        const { data: urlData } = _supabase.storage
+                            .from('meetup-images')
+                            .getPublicUrl(filePath);
+                        uploadedUrls.push(urlData.publicUrl);
+                    } else {
+                        console.error("Ошибка загрузки файла:", uploadError);
+                    }
                 }
             }
+
+            // Объединяем все полученные URL-адреса в одну длинную строку через запятую
+            const finalPhotoString = uploadedUrls.length > 0 ? uploadedUrls.join(',') : null;
 
             const meetupData = {
                 status: 'pending',
@@ -455,7 +475,7 @@
                 p4_route: document.getElementById('p4_route').value,
                 p5_rules: document.getElementById('p5_rules').value,
                 p6_contact: document.getElementById('p6_contact').value,
-                p7_photo_url: photoUrl,
+                p7_photo_url: finalPhotoString,
                 p8_notes: document.getElementById('p8_notes').value
             };
 
